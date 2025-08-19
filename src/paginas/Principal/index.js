@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
-import { Text, View, Image, TouchableOpacity, TextInput, Alert, ScrollView, AppRegistry } from 'react-native';
+import { Text, View, Image, TouchableOpacity, TextInput, Alert, ScrollView } from 'react-native';
 import estilos from './estilos';
+import { buscaUsuario } from '../../servicos/requisicoes/usuario';
 import api from "../../servicos/api"
 
 export default function Principal({ navigation }) {
     const [nomeUsuario, setNomeUsuario] = useState('');
     const [usuario, setUsuario] = useState({});
 
-    function Busca(){
-        api.get('/users').then(response => {console.log(response.data)})
+
+    async function busca() {
+        const resultado = await buscaUsuario(nomeUsuario);
+            console.log(resultado);
+        if (resultado) {
+            setUsuario(resultado);
+
+        } else {
+            Alert.alert("Usuário não encontrado!");
+        }
     }
+
 
     return (
         <ScrollView>
@@ -45,12 +55,13 @@ export default function Principal({ navigation }) {
                 />
 
                 <TouchableOpacity style={estilos.botao}
-                    onPress={() => Busca()}>
-                    
+                    onPress={busca()}
+                >
                     <Text style={estilos.textoBotao}>
                         Buscar
                     </Text>
                 </TouchableOpacity>
+
             </View>
         </ScrollView>
     );
